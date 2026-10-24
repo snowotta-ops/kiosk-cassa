@@ -64,12 +64,13 @@
       $("#cBtn").onclick=closeModal;
     });
   }
+
   // ---------- screens ----------
   const screens={sale,history,summary,products};
   const titles={sale:"Продажа",history:"История",summary:"Итоги",products:"Товары"};
   let current="sale";
-  let payType="cash"; // cash or transfer
-  let cart={}; // {productId: qty}
+  let payType="cash";
+  let cart={};
   function switchScreen(name){
     current=name;
     $$(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));
@@ -93,7 +94,6 @@
       </section>
       <section class="cart" id="cartBlock"></section>
     `;
-    // product buttons
     const grid=$("#prodGrid");
     state.products.filter(p=>p.active).forEach(p=>{
       const btn=document.createElement("button");
@@ -119,7 +119,7 @@
     }
     let total=0;
     const rows=[];
-    items.forEach(([pid,qty],i)=>{
+    items.forEach(([pid,qty])=>{
       const p=state.products.find(x=>x.id===pid);
       if(!p){return;}
       total+=p.price*qty;
@@ -146,12 +146,10 @@
         </div>
       </div>
     `;
-    // bind +
     $$(".cart-plus",block).forEach(b=>{
       const pid=b.closest(".cart-line").dataset.pid;
       b.onclick=()=>{cart[pid]++;renderCart();};
     });
-    // bind -
     $$(".cart-minus",block).forEach(b=>{
       const pid=b.closest(".cart-line").dataset.pid;
       b.onclick=()=>{cart[pid]--;if(cart[pid]<=0)delete cart[pid];renderCart();};
@@ -177,7 +175,6 @@
     cart={};
     renderCart();
     showToast(`Записано: ${fmtMoney(sale.total)} ${sale.pay==="cash"? "наличка":"перевод"}`,3000);
-    // tiny cancel window
     $("#confirmCloseBtn").classList.remove("hidden");
     setTimeout(()=>$("#confirmCloseBtn").classList.add("hidden"),5000);
     $("#confirmCloseBtn").onclick=()=>{
@@ -187,12 +184,12 @@
       $("#confirmCloseBtn").classList.add("hidden");
     };
   }
-  function mainSaleHaptic(){/* no vibration, optional visual */}
+  function mainSaleHaptic(){}
+
   // ---------- HISTORY ----------
   function renderHistory(){
     const m=$("#main");
     const today=todayKey();
-    const filter=$("#dateFilter");
     m.innerHTML=`
       <section class="hero">
         <h2 class="screen-title">История за ${formatDateReadable(today)}</h2>
@@ -244,11 +241,11 @@
       }
     });
   }
+
   // ---------- SUMMARY ----------
   function renderSummary(){
     const m=$("#main");
     const today=todayKey();
-    const filter=$("#dateFilter");
     m.innerHTML=`
       <section class="hero">
         <h2 class="screen-title">Итоги за ${formatDateReadable(today)}</h2>
@@ -279,7 +276,6 @@
       <div class="stat"><div class="stat-val">${fmtMoney(transfer)}</div><div class="stat-lab">Переводом</div></div>
       <div class="stat"><div class="stat-val">${cnt} продаж</div><div class="stat-lab">Количество продаж</div></div>
     `;
-    // товарные_counts
     const counts={};
     day.forEach(s=>{s.items.forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.quantity;});});
     const countsEl=$("#countsBlock");
@@ -296,6 +292,7 @@
       </ul>
     `;
   }
+
   // ---------- PRODUCTS ----------
   function renderProducts(){
     const m=$("#main");
@@ -399,7 +396,6 @@
   // ---------- init ----------
   $$(".nav-btn").forEach(b=>b.onclick=()=>switchScreen(b.dataset.screen));
   switchScreen("sale");
-  // register service worker
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(err=>console.log("SW error:",err));
   }
