@@ -66,7 +66,8 @@
   }
 
   // ---------- screens ----------
-  const screens={sale,history,summary,products};
+  // ИСПРАВЛЕНО: явное связывание имён
+  const screens={sale: renderSale, history: renderHistory, summary: renderSummary, products: renderProducts};
   const titles={sale:"Продажа",history:"История",summary:"Итоги",products:"Товары"};
   let current="sale";
   let payType="cash";
