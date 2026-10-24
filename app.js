@@ -2,36 +2,26 @@
 (() => {
   const STORE = "kioskData";
   const DEFAULT_PRODUCTS = [
-    {id:"p1",name:"Самса",price:30,active:true},
-    {id:"p2",name:"Чай",price:15,active:true},
-    {id:"p3",name:"Кофе",price:25,active:true},
-    {id:"p4",name:"Блин",price:20,active:true},
+    {id:"p1",name:"Саса",price:3,active:true},
+    {id:"p2",name:"Чай",price:5,active:true},
+    {id:"p3",name:"Кофе",price:8,active:true},
+    {id:"p4",name:"Блин",price:2.5,active:true},
   ];
-// ---------- state ----------
+
+  // ---------- state ----------
   let state = {sales:[],products:[]};
-  function load(){
-    try{
-      const raw = localStorage.getItem(STORE);
-      state = raw ? JSON.parse(raw) : {sales:[],products:DEFAULT_PRODUCTS.slice()};
-    }catch(e){
-      state = {sales:[],products:DEFAULT_PRODUCTS.slice()};
-    }
-  }
+  function load(){try{const raw=localStorage.getItem(STORE); state=raw?JSON.parse(raw):{sales:[],products:DEFAULT_PRODUCTS.slice()}}catch(e){state={sales:[],products:DEFAULT_PRODUCTS.slice()}};}
   function save(){localStorage.setItem(STORE,JSON.stringify(state));}
   load();
 
   // ---------- utils ----------
   const $=(s)=>document.querySelector(s);
   const $$=(s)=>Array.from(document.querySelectorAll(s));
-  const esc=(t)=>String(t).replace(/[&<>"']/g,m=>({'"':""","'":"'","<":"<",">":">","&":"&"}[m]));
+  const esc=(t)=>String(t).replace(/[&<>"']/g,m=>({'"':"&quot;","'":"&#39;","<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
   const fmtMoney=n=>" "+Math.round(n*100)/100+" сом";
   
   // ЛОКАЛЬНАЯ дата (YYYY-MM-DD) — чтобы совпадала с <input type="date">
-  const dayKey=(ts)=>{
-    const d=new Date(ts);
-    const p=x=>String(x).padStart(2,'0');
-    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
-  };
+  const dayKey=(ts)=>{const d=new Date(ts);const p=x=>String(x).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;};
   const todayKey=()=>dayKey(Date.now());
   
   const fmtTime=ts=>{const d=new Date(ts);const p=x=>String(x).padStart(2,'0');return `${p(d.getHours())}:${p(d.getMinutes())}`;};
@@ -113,7 +103,7 @@
       btn.className="prod";
       btn.type="button";
       btn.innerHTML=`<div class="prod-name">${esc(p.name)}</div><div class="prod-price">${fmtMoney(p.price)}</div>`;
-      btn.onclick=()=>{addToCart(p.id);};
+      btn.onclick=()=>{addToCart(p.id);mainSaleHaptic();};
       grid.appendChild(btn);
     });
     renderCart();
@@ -122,7 +112,7 @@
     cart[id]=(cart[id]||0)+1;
     renderCart();
   }
-function renderCart(){
+  function renderCart(){
     const block=$("#cartBlock");
     const items=Object.entries(cart);
     block.classList.toggle("show",items.length>0);
@@ -171,7 +161,7 @@ function renderCart(){
     $("#payCash").onclick=()=>{payType="cash";finalizeSale();};
     $("#payTransfer").onclick=()=>{payType="transfer";finalizeSale();};
   }
-function finalizeSale(){
+  function finalizeSale(){
     if(Object.keys(cart).length===0){showToast("Корзина пуста");return;}
     const lines=[];
     let sum=0;
@@ -197,6 +187,7 @@ function finalizeSale(){
       $("#confirmCloseBtn").classList.add("hidden");
     };
   }
+  function mainSaleHaptic(){}
 
   // ---------- HISTORY ----------
   function renderHistory(){
@@ -218,10 +209,9 @@ function finalizeSale(){
     renderHistoryList();
   }
   function formatDateReadable(iso){
-    const parts=iso.split('-');
-    if(parts.length!==3) return "некорректная дата";
-    const y=parts[0], m=parts[1], d=parts[2];
-    return `${d}.${m}.${y}`;
+    const d=new Date(iso);
+    const p=x=>String(x).padStart(2,"0");
+    return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}`;
   }
   function renderHistoryList(){
     const list=$("#salesList");
@@ -254,7 +244,8 @@ function finalizeSale(){
       }
     });
   }
-// ---------- SUMMARY ----------
+
+  // ---------- SUMMARY ----------
   function renderSummary(){
     const m=$("#main");
     const today=todayKey();
@@ -320,7 +311,7 @@ function finalizeSale(){
     renderProductList();
     $("#addProd").onclick=()=>openProductForm(null);
   }
-function renderProductList(){
+  function renderProductList(){
     const list=$("#manuList");
     const active=state.products.filter(p=>p.active).sort((a,b)=>(a.order||0)-(b.order||0));
     const inactive=state.products.filter(p=>!p.active);
@@ -373,7 +364,7 @@ function renderProductList(){
         <label>Название:</label>
         <input type="text" id="pfName" value="${isEdit?esc(prod.name):""}" placeholder="Например, Самса">
         <label>Цена (сом):</label>
-        <input type="number" id="pfPrice" min="0" step="0.1" value="${isEdit?prod.price:""}" placeholder="Например, 30">
+        <input type="number" id="pfPrice" min="0" step="0.1" value="${isEdit?prod.price:""}" placeholder="Например, 3">
         <label class="mtag" style="margin-top:8px;">
           <input type="checkbox" id="pfActive" ${isEdit&&prod.active?"checked":""}>
           <span>Aктивен (показывать в продажах)</span>
