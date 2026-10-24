@@ -109,3 +109,45 @@ input[type=checkbox]{margin:0;}
 .modal-form .row{display:flex; gap:8px;}
 .modal-form .row > *{flex:1;}
 .modal-actions{display:flex; gap:8px; margin-top:12px;}
+/* ===== FIXES: cart scroll + sticky footer + modal buttons ===== */
+
+/* Корзина: список скроллится, футер прилипает к низу экрана */
+.cart{
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 220px); /* оставляем место под шапку и навигацию */
+}
+.cart.show{display:flex;}
+.cart-list{
+  flex:1 1 auto;
+  overflow-y:auto;
+  min-height:0; /* важно для флекс-скролла */
+  padding-right:8px; /* место под скроллбар */
+}
+.cart-foot{
+  flex:0 0 auto;
+  position:sticky;
+  bottom:0;
+  background:var(--bg);
+  padding-top:10px;
+  margin-top:8px;
+  border-top:1px solid var(--line);
+  z-index:10;
+  box-shadow:0 -4px 8px -4px rgba(0,0,0,.08);
+}
+
+/* Модалка: кнопки ровно по краям */
+.modal-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:12px;
+}
+.modal-actions > *{flex:1;}
+
+/* Чуть больше зоны нажатия для инпутов в модалке */
+.modal-form input[type="text"],
+.modal-form input[type="number"]{
+  font-size:18px;
+  padding:12px;
+}
