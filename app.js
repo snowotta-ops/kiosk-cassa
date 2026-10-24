@@ -241,7 +241,7 @@
         b.onclick=()=>{confirm("Удалить эту продажу?",()=>{state.sales=state.sales.filter(x=>x.id!==id);save();renderHistoryList();});};
       }else{
         b.onclick=()=>{const s=state.sales.find(x=>x.id===id);if(!s)return;s.pay=s.pay==="cash"?"transfer":"cash";save();renderHistoryList();};
-      }
+      });
     });
   // ---------- SUMMARY ----------
   function renderSummary(){
