@@ -1,0 +1,15 @@
+{
+  "name": "Кассовая книга для киоска",
+  "short_name": "Касса",
+  "description": "Бесплатная кассовая книга: продажа, история и итоги дня.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f5f3",
+  "theme_color": "#0a7d5b",
+  "lang": "ru",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

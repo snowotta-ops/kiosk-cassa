@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a7d5b">
+  <link rel="manifest" href="./manifest.json">
+  <title>Касса</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <!-- Топбар -->
+  <header class="topbar">
+    <h1 id="pageTitle" class="topbar-title">Продажа</h1>
+    <input type="date" id="dateFilter" class="toolbar">
+  </header>
+
+  <main id="main"></main>
+
+  <!-- Низкая на навигация -->
+  <nav class="bottom-nav" aria-label="Навигация">
+    <button class="nav-btn active" data-screen="sale"><span>📝</span><span>Продажа</span></button>
+    <button class="nav-btn" data-screen="history"><span>📋</span><span>История</span></button>
+    <button class="nav-btn" data-screen="summary"><span>💰</span><span>Итоги</span></button>
+    <button class="nav-btn" data-screen="products"><span>🛍️</span><span>Товары</span></button>
+  </nav>
+
+  <!-- Подтверждение продажи -->
+  <div id="confirmToast" class="toast hidden"></div>
+  <button id="confirmCloseBtn" class="btn-sm btn-ghost hidden" style="position:fixed; bottom:92px; left:50%; transform:translateX(-50%); z-index:90; margin:0 8px;">✕</button>
+
+  <!-- Модальное окно -->
+  <div id="modalOverlay" class="modal-overlay hidden"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
