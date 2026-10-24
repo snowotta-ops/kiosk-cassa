@@ -10,7 +10,7 @@
 
   // ---------- state ----------
   let state = {sales:[],products:[]};
-  function load(){try{state=JSON.parse(localStorage.getItem(STORE))||{sales:[],products:DEFAULT_PRODUCTS.slice()}}catch{e};}
+  function load(){try{const raw=localStorage.getItem(STORE); state=raw?JSON.parse(raw):{sales:[],products:DEFAULT_PRODUCTS.slice()}}catch(e){state={sales:[],products:DEFAULT_PRODUCTS.slice()}};}
   function save(){localStorage.setItem(STORE,JSON.stringify(state));}
   load();
 
@@ -19,11 +19,14 @@
   const $$=(s)=>Array.from(document.querySelectorAll(s));
   const esc=(t)=>String(t).replace(/[&<>"']/g,m=>({'"':"&quot;","'":"&#39;","<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
   const fmtMoney=n=>" "+Math.round(n*100)/100+" сом";
-  const dayKey=(ts)=>new Date(ts).toISOString().slice(0,10);
-  const fmtTime=ts=>{const d=new Date(ts);const p=x=>String(x).padStart(2,"0");return `${p(d.getHours())}:${p(d.getMinutes())}`;};
-  const fmtDateTime=ts=>{const d=new Date(ts);const p=x=>String(x).padStart(2,"0");return `${p(d.getHours())}:${p(d.getMinutes())} ${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}`;};
-  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  
+  // ЛОКАЛЬНАЯ дата (YYYY-MM-DD) — чтобы совпадала с <input type="date">
+  const dayKey=(ts)=>{const d=new Date(ts);const p=x=>String(x).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;};
   const todayKey=()=>dayKey(Date.now());
+  
+  const fmtTime=ts=>{const d=new Date(ts);const p=x=>String(x).padStart(2,'0');return `${p(d.getHours())}:${p(d.getMinutes())}`;};
+  const fmtDateTime=ts=>{const d=new Date(ts);const p=x=>String(x).padStart(2,'0');return `${p(d.getHours())}:${p(d.getMinutes())} ${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}`;};
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
   // ---------- toast ----------
   let toastT=null;
@@ -66,7 +69,6 @@
   }
 
   // ---------- screens ----------
-  // ИСПРАВЛЕНО: явное связывание имён
   const screens={sale: renderSale, history: renderHistory, summary: renderSummary, products: renderProducts};
   const titles={sale:"Продажа",history:"История",summary:"Итоги",products:"Товары"};
   let current="sale";
